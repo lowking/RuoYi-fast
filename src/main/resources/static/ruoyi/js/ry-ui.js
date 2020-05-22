@@ -43,6 +43,7 @@ var table = {
         		    sortName: "",
         		    sortOrder: "asc",
         		    pagination: true,
+        		    paginationLoop: false,
         		    pageSize: 10,
         		    pageList: [10, 25, 50],
         		    toolbar: "toolbar",
@@ -58,6 +59,7 @@ var table = {
                     showToggle: true,
                     showExport: false,
                     clickToSelect: false,
+                    singleSelect: false,
                     mobileResponsive: true,
                     rememberSelected: false,
         		    fixedColumns: false,
@@ -84,6 +86,7 @@ var table = {
                     sortName: options.sortName,                         // 排序列名称
                     sortOrder: options.sortOrder,                       // 排序方式  asc 或者 desc
                     pagination: options.pagination,                     // 是否显示分页（*）
+                    paginationLoop: options.paginationLoop,             // 是否启用分页条无限循环的功能
                     pageNumber: 1,                                      // 初始化加载第一页，默认第一页
                     pageSize: options.pageSize,                         // 每页的记录行数（*） 
                     pageList: options.pageList,                         // 可供选择的每页的行数（*）
@@ -101,9 +104,13 @@ var table = {
                     showColumns: options.showColumns,                   // 是否显示隐藏某列下拉框
                     showToggle: options.showToggle,                     // 是否显示详细视图和列表视图的切换按钮
                     showExport: options.showExport,                     // 是否支持导出文件
+                    showHeader: options.showHeader,                     // 是否显示表头
+                    showFullscreen: options.showFullscreen,             // 是否显示全屏按钮
                     uniqueId: options.uniqueId,                         // 唯 一的标识符
                     clickToSelect: options.clickToSelect,				// 是否启用点击选中行
+                    singleSelect: options.singleSelect,                 // 是否单选checkbox
                     mobileResponsive: options.mobileResponsive,         // 是否支持移动端适配
+                    cardView: options.cardView,                         // 是否启用显示卡片视图
                     detailView: options.detailView,                     // 是否启用显示细节视图
                     onClickRow: options.onClickRow,                     // 点击某行触发的事件
                     onDblClickRow: options.onDblClickRow,               // 双击某行触发的事件
@@ -120,6 +127,7 @@ var table = {
                     queryParams: options.queryParams,                   // 传递参数（*）
                     rowStyle: options.rowStyle,                         // 通过自定义函数设置行样式
                     columns: options.columns,                           // 显示列信息（*）
+                    data: options.data,                                 // 被加载的数据
                     responseHandler: $.table.responseHandler,           // 在加载服务器发送来的数据之前处理函数
                     onLoadSuccess: $.table.onLoadSuccess,               // 当所有数据被加载时触发处理函数
                     exportOptions: options.exportOptions,               // 前端导出忽略列索引
@@ -213,9 +221,14 @@ var table = {
             	$(optionsIds).off("click").on("click", '.img-circle', function() {
     			    var src = $(this).attr('src');
     			    var target = $(this).data('target');
-    			    var height = $(this).data('height');
-    			    var width = $(this).data('width');
     			    if($.common.equals("self", target)) {
+    			    	var height = $(this).data('height');
+						var width = $(this).data('width');
+						// 如果是移动端，就使用自适应大小弹窗
+						if ($.common.isMobile()) {
+							width = 'auto';
+							height = 'auto';
+						}
     			    	layer.open({
         			        title: false,
         			        type: 1,
@@ -251,7 +264,7 @@ var table = {
             		table.options.onLoadSuccess(data);
             	}
             	// 浮动提示框特效
-            	$("[data-toggle='tooltip']").tooltip();
+            	$(".table [data-toggle='tooltip']").tooltip();
             },
             // 表格销毁
             destroy: function (tableId) {
@@ -277,7 +290,7 @@ var table = {
 					_value = _value.replace(/\'/g,"&apos;");
 					_value = _value.replace(/\"/g,"&quot;");
 					var actions = [];
-					actions.push($.common.sprintf('<input id="tooltip-show" style="opacity: 0;position: absolute;z-index:-1" type="text" value="%s"/>', _value));
+					actions.push($.common.sprintf('<input style="opacity: 0;position: absolute;z-index:-1" type="text" value="%s"/>', _value));
                 	actions.push($.common.sprintf('<a href="###" class="tooltip-show" data-toggle="tooltip" data-target="%s" title="%s">%s</a>', _target, _value, _text));
 					return actions.join('');
 				} else {
@@ -343,8 +356,12 @@ var table = {
     			table.set();
     			$.modal.confirm("确定导出所有" + table.options.modalName + "吗？", function() {
 	    			var currentId = $.common.isEmpty(formId) ? $('form').attr('id') : formId;
+	    			var params = $("#" + table.options.id).bootstrapTable('getOptions');
+	    			var dataParam = $("#" + currentId).serializeArray();
+	    			dataParam.push({ "name": "orderByColumn", "value": params.sortName });
+	    			dataParam.push({ "name": "isAsc", "value": params.sortOrder });
 	    			$.modal.loading("正在导出数据，请稍后...");
-	    			$.post(table.options.exportUrl, $("#" + currentId).serializeArray(), function(result) {
+	    			$.post(table.options.exportUrl, dataParam, function(result) {
 	    				if (result.code == web_status.SUCCESS) {
 	    			        window.location.href = ctx + "common/download?fileName=" + encodeURI(result.msg) + "&delete=" + true;
 	    				} else if (result.code == web_status.WARNING) {
@@ -393,9 +410,7 @@ var table = {
             			}
             			var index = layer.load(2, {shade: false});
             			$.modal.disable();
-            			var formData = new FormData();
-            			formData.append("file", layero.find('#file')[0].files[0]);
-            			formData.append("updateSupport", $("input[name='updateSupport']").is(':checked'));
+            			var formData = new FormData(layero.find('form')[0]);
             			$.ajax({
             				url: table.options.importUrl,
             				data: formData,
@@ -493,6 +508,16 @@ var table = {
             hideColumn: function(column, tableId) {
             	var currentId = $.common.isEmpty(tableId) ? table.options.id : tableId;
             	$("#" + currentId).bootstrapTable('hideColumn', column);
+            },
+            // 显示所有表格列
+            showAllColumns: function(tableId) {
+            	var currentId = $.common.isEmpty(tableId) ? table.options.id : tableId;
+            	$("#" + currentId).bootstrapTable('showAllColumns');
+            },
+            // 隐藏所有表格列
+            hideAllColumns: function(tableId) {
+            	var currentId = $.common.isEmpty(tableId) ? table.options.id : tableId;
+            	$("#" + currentId).bootstrapTable('hideAllColumns');
             }
         },
         // 表格树封装处理
@@ -557,12 +582,15 @@ var table = {
             	return $.common.uniqueFn(rows);
             },
             // 请求获取数据后处理回调函数，校验异常状态提醒
-            responseHandler: function(data) {
-            	if (data.code != undefined && data.code != 0) {
-            		$.modal.alertWarning(data.msg);
+            responseHandler: function(res) {
+            	if (typeof table.options.responseHandler == "function") {
+            		table.options.responseHandler(res);
+                }
+            	if (res.code != undefined && res.code != 0) {
+            		$.modal.alertWarning(res.msg);
             		return [];
                 } else {
-                    return data;
+                    return res;
                 }
             },
         },
@@ -578,6 +606,12 @@ var table = {
             	    	$("#" + table.options.id).bootstrapTable('refresh');
                 	} else{
                 	    $("#" + tableId).bootstrapTable('refresh');
+                	}
+            	} else if (table.options.type == table_type.bootstrapTreeTable) {
+            		if($.common.isEmpty(tableId)){
+            	    	$("#" + table.options.id).bootstrapTreeTable('refresh', []);
+                	} else{
+                	    $("#" + tableId).bootstrapTreeTable('refresh', []);
                 	}
             	}
             },
@@ -697,7 +731,7 @@ var table = {
             // 弹出层指定宽度
             open: function (title, url, width, height, callback) {
             	//如果是移动端，就使用自适应大小弹窗
-            	if (navigator.userAgent.match(/(iPhone|iPod|Android|ios)/i)) {
+            	if ($.common.isMobile()) {
             	    width = 'auto';
             	    height = 'auto';
             	}
@@ -769,7 +803,7 @@ var table = {
             // 弹出层全屏
             openFull: function (title, url, width, height) {
             	//如果是移动端，就使用自适应大小弹窗
-            	if (navigator.userAgent.match(/(iPhone|iPod|Android|ios)/i)) {
+            	if ($.common.isMobile()) {
             	    width = 'auto';
             	    height = 'auto';
             	}
@@ -882,7 +916,7 @@ var table = {
             	var _width = $.common.isEmpty(width) ? "800" : width; 
                 var _height = $.common.isEmpty(height) ? ($(window).height() - 50) : height;
             	//如果是移动端，就使用自适应大小弹窗
-            	if (navigator.userAgent.match(/(iPhone|iPod|Android|ios)/i)) {
+            	if ($.common.isMobile()) {
             	    _width = 'auto';
             	    _height = 'auto';
             	}
@@ -998,8 +1032,17 @@ var table = {
             	if ($.common.isNotEmpty(id)) {
             	    url = table.options.updateUrl.replace("{id}", id);
             	} else {
-            	    var row = $.common.isEmpty(table.options.uniqueId) ? $.table.selectFirstColumns() : $.table.selectColumns(table.options.uniqueId);
-            	    url = table.options.updateUrl.replace("{id}", row);
+            		if(table.options.type == table_type.bootstrapTreeTable) {
+            			var row = $("#" + table.options.id).bootstrapTreeTable('getSelections')[0];
+            			if ($.common.isEmpty(row)) {
+            				$.modal.alertWarning("请至少选择一条记录");
+            				return;
+            			}
+            			url = table.options.updateUrl.replace("{id}", row[table.options.uniqueId]);
+            		} else {
+            			var row = $.common.isEmpty(table.options.uniqueId) ? $.table.selectFirstColumns() : $.table.selectColumns(table.options.uniqueId);
+                	    url = table.options.updateUrl.replace("{id}", row);
+            		}
             	}
             	$.modal.openFull("修改" + table.options.modalName, url);
             },
@@ -1091,7 +1134,9 @@ var table = {
                 } else if (result.code == web_status.SUCCESS && table.options.type == table_type.bootstrapTreeTable) {
                 	$.modal.msgSuccess(result.msg);
                 	$.treeTable.refresh();
-                } else if (result.code == web_status.WARNING) {
+                } else if (result.code == web_status.SUCCESS && table.option.type == undefined) {
+                    $.modal.msgSuccess(result.msg)
+                }  else if (result.code == web_status.WARNING) {
                     $.modal.alertWarning(result.msg)
                 }  else {
                 	$.modal.alertError(result.msg);
@@ -1471,7 +1516,11 @@ var table = {
                     }　　
                 }
                 return count;
-            }
+            },
+            // 判断移动端
+            isMobile: function () {
+                return navigator.userAgent.match(/(Android|iPhone|SymbianOS|Windows Phone|iPad|iPod)/i);
+            },
         }
     });
 })(jQuery);
