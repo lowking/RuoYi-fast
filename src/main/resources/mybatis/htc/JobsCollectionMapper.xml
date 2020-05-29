@@ -1,0 +1,153 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.project.htc.jobscollection.mapper.JobsCollectionMapper">
+    
+    <resultMap type="JobsCollection" id="JobsCollectionResult">
+        <result property="id"    column="id"    />
+        <result property="companyname"    column="companyname"    />
+        <result property="companyaddr"    column="companyaddr"    />
+        <result property="email"    column="email"    />
+        <result property="sendmode"    column="sendmode"    />
+        <result property="senddate"    column="senddate"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="createDate"    column="create_date"    />
+        <result property="updateBy"    column="update_by"    />
+        <result property="updateDate"    column="update_date"    />
+        <result property="delFlag"    column="del_flag"    />
+        <result property="url"    column="url"    />
+        <result property="homeCall"    column="home_call"    />
+        <result property="phone"    column="phone"    />
+        <result property="linkman"    column="linkman"    />
+        <result property="walklength"    column="walklength"    />
+        <result property="loadlength"    column="loadlength"    />
+        <result property="startpoint"    column="startpoint"    />
+        <result property="remarks"    column="remarks"    />
+        <result property="jobNumber"    column="job_number"    />
+    </resultMap>
+
+    <sql id="selectJobsCollectionVo">
+        select id, companyname, companyaddr, email, sendmode, senddate, create_by, create_date, update_by, update_date, del_flag, url, home_call, phone, linkman, walklength, loadlength, startpoint, remarks, job_number from htc_jobs_collection
+    </sql>
+
+    <select id="selectJobsCollectionList" parameterType="JobsCollection" resultMap="JobsCollectionResult">
+        <include refid="selectJobsCollectionVo"/>
+        <where>  
+            <if test="companyname != null  and companyname != ''"> and companyname like concat('%', #{companyname}, '%')</if>
+            <if test="companyaddr != null  and companyaddr != ''"> and companyaddr like concat('%', #{companyaddr}, '%')</if>
+            <if test="email != null  and email != ''"> and email like concat('%', #{email}, '%')</if>
+            <if test="sendmode != null  and sendmode != ''"> and sendmode = #{sendmode}</if>
+            <if test="senddate != null "> and senddate = #{senddate}</if>
+            <if test="params.beginCreateDate != null and params.beginCreateDate != '' and params.endCreateDate != null and params.endCreateDate != ''"> and create_date between #{params.beginCreateDate} and #{params.endCreateDate}</if>
+            <if test="params.beginUpdateDate != null and params.beginUpdateDate != '' and params.endUpdateDate != null and params.endUpdateDate != ''"> and update_date between #{params.beginUpdateDate} and #{params.endUpdateDate}</if>
+            <if test="url != null  and url != ''"> and url like concat('%', #{url}, '%')</if>
+            <if test="homeCall != null  and homeCall != ''"> and home_call like concat('%', #{homeCall}, '%')</if>
+            <if test="phone != null  and phone != ''"> and phone like concat('%', #{phone}, '%')</if>
+            <if test="linkman != null  and linkman != ''"> and linkman like concat('%', #{linkman}, '%')</if>
+            <if test="walklength != null  and walklength != ''"> and walklength like concat('%', #{walklength}, '%')</if>
+            <if test="loadlength != null  and loadlength != ''"> and loadlength like concat('%', #{loadlength}, '%')</if>
+            <if test="startpoint != null  and startpoint != ''"> and startpoint like concat('%', #{startpoint}, '%')</if>
+            <if test="remarks != null  and remarks != ''"> and remarks like concat('%', #{remarks}, '%')</if>
+            <if test="jobNumber != null  and jobNumber != ''"> and remarks = #{jobNumber}</if>
+        </where>
+        order by create_date desc
+    </select>
+    
+    <select id="selectJobsCollectionById" parameterType="Long" resultMap="JobsCollectionResult">
+        <include refid="selectJobsCollectionVo"/>
+        where id = #{id}
+    </select>
+        
+    <insert id="insertJobsCollection" parameterType="JobsCollection">
+        insert into htc_jobs_collection
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null ">id,</if>
+            <if test="companyname != null  and companyname != ''">companyname,</if>
+            <if test="companyaddr != null  and companyaddr != ''">companyaddr,</if>
+            <if test="email != null  and email != ''">email,</if>
+            <if test="sendmode != null  and sendmode != ''">sendmode,</if>
+            <if test="senddate != null ">senddate,</if>
+            <if test="createBy != null  and createBy != ''">create_by,</if>
+            <if test="createDate != null ">create_date,</if>
+            <if test="updateBy != null  and updateBy != ''">update_by,</if>
+            <if test="updateDate != null ">update_date,</if>
+            <if test="delFlag != null  and delFlag != ''">del_flag,</if>
+            <if test="url != null  and url != ''">url,</if>
+            <if test="homeCall != null  and homeCall != ''">home_call,</if>
+            <if test="phone != null  and phone != ''">phone,</if>
+            <if test="linkman != null  and linkman != ''">linkman,</if>
+            <if test="walklength != null  and walklength != ''">walklength,</if>
+            <if test="loadlength != null  and loadlength != ''">loadlength,</if>
+            <if test="startpoint != null  and startpoint != ''">startpoint,</if>
+            <if test="remarks != null  and remarks != ''">remarks,</if>
+            <if test="jobNumber != null  and jobNumber != ''">job_number,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null ">#{id},</if>
+            <if test="companyname != null  and companyname != ''">#{companyname},</if>
+            <if test="companyaddr != null  and companyaddr != ''">#{companyaddr},</if>
+            <if test="email != null  and email != ''">#{email},</if>
+            <if test="sendmode != null  and sendmode != ''">#{sendmode},</if>
+            <if test="senddate != null ">#{senddate},</if>
+            <if test="createBy != null  and createBy != ''">#{createBy},</if>
+            <if test="createDate != null ">#{createDate},</if>
+            <if test="updateBy != null  and updateBy != ''">#{updateBy},</if>
+            <if test="updateDate != null ">#{updateDate},</if>
+            <if test="delFlag != null  and delFlag != ''">#{delFlag},</if>
+            <if test="url != null  and url != ''">#{url},</if>
+            <if test="homeCall != null  and homeCall != ''">#{homeCall},</if>
+            <if test="phone != null  and phone != ''">#{phone},</if>
+            <if test="linkman != null  and linkman != ''">#{linkman},</if>
+            <if test="walklength != null  and walklength != ''">#{walklength},</if>
+            <if test="loadlength != null  and loadlength != ''">#{loadlength},</if>
+            <if test="startpoint != null  and startpoint != ''">#{startpoint},</if>
+            <if test="remarks != null  and remarks != ''">#{remarks},</if>
+            <if test="jobNumber != null  and jobNumber != ''">#{jobNumber},</if>
+         </trim>
+    </insert>
+
+    <update id="updateJobsCollection" parameterType="JobsCollection">
+        update htc_jobs_collection
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="companyname != null  and companyname != ''">companyname = #{companyname},</if>
+            <if test="companyaddr != null  and companyaddr != ''">companyaddr = #{companyaddr},</if>
+            <if test="email != null  and email != ''">email = #{email},</if>
+            <if test="sendmode != null  and sendmode != ''">sendmode = #{sendmode},</if>
+            <if test="senddate != null ">senddate = #{senddate},</if>
+            <if test="createBy != null  and createBy != ''">create_by = #{createBy},</if>
+            <if test="createDate != null ">create_date = #{createDate},</if>
+            <if test="updateBy != null  and updateBy != ''">update_by = #{updateBy},</if>
+            <if test="updateDate != null ">update_date = #{updateDate},</if>
+            <if test="delFlag != null  and delFlag != ''">del_flag = #{delFlag},</if>
+            <if test="url != null  and url != ''">url = #{url},</if>
+            <if test="homeCall != null  and homeCall != ''">home_call = #{homeCall},</if>
+            <if test="phone != null  and phone != ''">phone = #{phone},</if>
+            <if test="linkman != null  and linkman != ''">linkman = #{linkman},</if>
+            <if test="walklength != null  and walklength != ''">walklength = #{walklength},</if>
+            <if test="loadlength != null  and loadlength != ''">loadlength = #{loadlength},</if>
+            <if test="startpoint != null  and startpoint != ''">startpoint = #{startpoint},</if>
+            <if test="remarks != null  and remarks != ''">remarks = #{remarks},</if>
+            <if test="jobNumber != null  and jobNumber != ''">job_number = #{jobNumber},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteJobsCollectionById" parameterType="Long">
+        delete from htc_jobs_collection where id = #{id}
+    </delete>
+
+    <delete id="deleteJobsCollectionByIds" parameterType="String">
+        delete from htc_jobs_collection where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+    <select id="selectCount" parameterType="JobsCollection" resultType="int">
+        select count(1) from htc_jobs_collection
+        where del_flag = '0'
+        <if test="companyname != null  and companyname != ''"> and companyname like concat('%', #{companyname}, '%')</if>
+    </select>
+
+</mapper>
