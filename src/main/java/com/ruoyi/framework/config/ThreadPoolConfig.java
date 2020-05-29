@@ -1,13 +1,15 @@
 package com.ruoyi.framework.config;
 
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.ScheduledThreadPoolExecutor;
-import java.util.concurrent.ThreadPoolExecutor;
+import com.ruoyi.common.utils.Threads;
 import org.apache.commons.lang3.concurrent.BasicThreadFactory;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.task.TaskExecutor;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
-import com.ruoyi.common.utils.Threads;
+
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.ScheduledThreadPoolExecutor;
+import java.util.concurrent.ThreadPoolExecutor;
 
 /**
  * 线程池配置
@@ -39,6 +41,20 @@ public class ThreadPoolConfig
         executor.setKeepAliveSeconds(keepAliveSeconds);
         // 线程池对拒绝任务(无线程可用)的处理策略
         executor.setRejectedExecutionHandler(new ThreadPoolExecutor.CallerRunsPolicy());
+        return executor;
+    }
+
+    @Bean()
+    public TaskExecutor taskExecutor(){
+        ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();
+        int processors = Runtime.getRuntime().availableProcessors();
+        // 设置核心线程数
+        executor.setCorePoolSize(processors * 2);
+        // 设置最大线程数
+        executor.setMaxPoolSize(processors * 2);
+        executor.setThreadNamePrefix("htc-exe-thread-");
+        // 设置队列容量
+        executor.setQueueCapacity(20);
         return executor;
     }
 

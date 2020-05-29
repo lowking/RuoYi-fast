@@ -88,6 +88,7 @@ pagehelper:
 
 # Shiro
 shiro:
+  excludeUrl: /htc/jobscollection/getZlDetail
   user:
     # 登录地址
     loginUrl: /login
@@ -138,4 +139,4 @@ gen:
   # 自动去除表前缀，默认是true
   autoRemovePre: true
   # 表前缀（生成类名不会包含表前缀，多个用逗号分隔）
-  tablePrefix: sys_
+  tablePrefix: sys_,htc_

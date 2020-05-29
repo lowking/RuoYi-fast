@@ -1,11 +1,18 @@
 package com.ruoyi.framework.config;
 
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.LinkedHashMap;
-import java.util.Map;
-import javax.servlet.Filter;
+import at.pollux.thymeleaf.shiro.dialect.ShiroDialect;
+import com.ruoyi.common.utils.StringUtils;
+import com.ruoyi.common.utils.spring.SpringUtils;
+import com.ruoyi.framework.shiro.realm.UserRealm;
+import com.ruoyi.framework.shiro.session.OnlineSessionDAO;
+import com.ruoyi.framework.shiro.session.OnlineSessionFactory;
+import com.ruoyi.framework.shiro.web.filter.LogoutFilter;
+import com.ruoyi.framework.shiro.web.filter.captcha.CaptchaValidateFilter;
+import com.ruoyi.framework.shiro.web.filter.kickout.KickoutSessionFilter;
+import com.ruoyi.framework.shiro.web.filter.online.OnlineSessionFilter;
+import com.ruoyi.framework.shiro.web.filter.sync.SyncOnlineSessionFilter;
+import com.ruoyi.framework.shiro.web.session.OnlineWebSessionManager;
+import com.ruoyi.framework.shiro.web.session.SpringSessionValidationScheduler;
 import org.apache.commons.io.IOUtils;
 import org.apache.shiro.cache.ehcache.EhCacheManager;
 import org.apache.shiro.codec.Base64;
@@ -21,19 +28,14 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import com.ruoyi.common.utils.StringUtils;
-import com.ruoyi.common.utils.spring.SpringUtils;
-import com.ruoyi.framework.shiro.realm.UserRealm;
-import com.ruoyi.framework.shiro.session.OnlineSessionDAO;
-import com.ruoyi.framework.shiro.session.OnlineSessionFactory;
-import com.ruoyi.framework.shiro.web.filter.LogoutFilter;
-import com.ruoyi.framework.shiro.web.filter.captcha.CaptchaValidateFilter;
-import com.ruoyi.framework.shiro.web.filter.kickout.KickoutSessionFilter;
-import com.ruoyi.framework.shiro.web.filter.online.OnlineSessionFilter;
-import com.ruoyi.framework.shiro.web.filter.sync.SyncOnlineSessionFilter;
-import com.ruoyi.framework.shiro.web.session.OnlineWebSessionManager;
-import com.ruoyi.framework.shiro.web.session.SpringSessionValidationScheduler;
-import at.pollux.thymeleaf.shiro.dialect.ShiroDialect;
+
+import javax.servlet.Filter;
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.LinkedHashMap;
+import java.util.Map;
+import java.util.stream.Stream;
 
 /**
  * 权限配置加载
@@ -92,6 +94,9 @@ public class ShiroConfig
     // 权限认证失败地址
     @Value("${shiro.user.unauthorizedUrl}")
     private String unauthorizedUrl;
+
+    @Value("${shiro.excludeUrl}")
+    private String excludeUrl;
 
     /**
      * 缓存管理器 使用Ehcache实现
@@ -256,6 +261,10 @@ public class ShiroConfig
         filterChainDefinitionMap.put("/login", "anon,captchaValidate");
         // 注册相关
         filterChainDefinitionMap.put("/register", "anon,captchaValidate");
+        // 添加一些自定义的排除url
+        if (StringUtils.isNotEmpty(excludeUrl)) {
+            Stream.of(excludeUrl.split(",")).forEach(url -> filterChainDefinitionMap.put(url, "anon"));
+        }
         // 系统权限列表
         // filterChainDefinitionMap.putAll(SpringUtils.getBean(IMenuService.class).selectPermsAll());
 
