@@ -39,8 +39,10 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="email != null  and email != ''"> and email like concat('%', #{email}, '%')</if>
             <if test="sendmode != null  and sendmode != ''"> and sendmode = #{sendmode}</if>
             <if test="senddate != null "> and senddate = #{senddate}</if>
-            <if test="params.beginCreateDate != null and params.beginCreateDate != '' and params.endCreateDate != null and params.endCreateDate != ''"> and create_date between #{params.beginCreateDate} and #{params.endCreateDate}</if>
-            <if test="params.beginUpdateDate != null and params.beginUpdateDate != '' and params.endUpdateDate != null and params.endUpdateDate != ''"> and update_date between #{params.beginUpdateDate} and #{params.endUpdateDate}</if>
+            <if test="params.beginCreateDate != null and params.beginCreateDate != ''"> and create_date >= #{params.beginCreateDate}</if>
+            <if test="params.endCreateDate != null and params.endCreateDate != ''"> and  #{params.endCreateDate} > create_date</if>
+            <if test="params.beginUpdateDate != null and params.beginUpdateDate != ''"> and update_date >= #{params.beginUpdateDate}</if>
+            <if test="params.endUpdateDate != null and params.endUpdateDate != ''"> and #{params.beginUpdateDate} > update_date</if>
             <if test="url != null  and url != ''"> and url like concat('%', #{url}, '%')</if>
             <if test="homeCall != null  and homeCall != ''"> and home_call like concat('%', #{homeCall}, '%')</if>
             <if test="phone != null  and phone != ''"> and phone like concat('%', #{phone}, '%')</if>
