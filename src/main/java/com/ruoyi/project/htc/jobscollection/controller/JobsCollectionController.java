@@ -7,6 +7,7 @@ import com.ruoyi.common.constant.Constants;
 import com.ruoyi.common.utils.CacheUtils;
 import com.ruoyi.common.utils.http.HttpUtils;
 import com.ruoyi.common.utils.poi.ExcelUtil;
+import com.ruoyi.common.utils.security.ShiroUtils;
 import com.ruoyi.framework.aspectj.lang.annotation.Log;
 import com.ruoyi.framework.aspectj.lang.enums.BusinessType;
 import com.ruoyi.framework.web.controller.BaseController;
@@ -105,6 +106,10 @@ public class JobsCollectionController extends BaseController
     @ResponseBody
     public AjaxResult addSave(JobsCollection jobsCollection)
     {
+        jobsCollection.setCreateDate(new Date());
+        jobsCollection.setCreateBy(String.valueOf(ShiroUtils.getUserId()));
+        jobsCollection.setUpdateDate(new Date());
+        jobsCollection.setUpdateBy(String.valueOf(ShiroUtils.getUserId()));
         return toAjax(jobsCollectionService.insertJobsCollection(jobsCollection));
     }
 
