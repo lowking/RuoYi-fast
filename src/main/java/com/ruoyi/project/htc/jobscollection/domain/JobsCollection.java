@@ -92,6 +92,9 @@ public class JobsCollection extends BaseEntity
     /** jobNumber */
     private String jobNumber;
 
+    /** star */
+    private Integer star;
+
     @Override
     public String toString() {
         return new ToStringBuilder(this,ToStringStyle.MULTI_LINE_STYLE)
@@ -115,6 +118,7 @@ public class JobsCollection extends BaseEntity
             .append("startpoint", getStartpoint())
             .append("remarks", getRemarks())
             .append("jobNumber", getJobNumber())
+            .append("star", getStar())
             .toString();
     }
 }

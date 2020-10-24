@@ -110,7 +110,8 @@ public class JobsCollectionController extends BaseController
         jobsCollection.setCreateBy(String.valueOf(ShiroUtils.getUserId()));
         jobsCollection.setUpdateDate(new Date());
         jobsCollection.setUpdateBy(String.valueOf(ShiroUtils.getUserId()));
-        return toAjax(jobsCollectionService.insertJobsCollection(jobsCollection));
+        int count = jobsCollectionService.selectCount(jobsCollection);
+        return toAjax(count > 0 ? 1 : jobsCollectionService.insertJobsCollection(jobsCollection));
     }
 
     /**

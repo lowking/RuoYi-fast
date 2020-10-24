@@ -25,10 +25,11 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="startpoint"    column="startpoint"    />
         <result property="remarks"    column="remarks"    />
         <result property="jobNumber"    column="job_number"    />
+        <result property="star"    column="star"    />
     </resultMap>
 
     <sql id="selectJobsCollectionVo">
-        select id, companyname, companyaddr, email, sendmode, senddate, create_by, create_date, update_by, update_date, del_flag, url, home_call, phone, linkman, walklength, loadlength, startpoint, remarks, job_number from htc_jobs_collection
+        select id, companyname, companyaddr, email, sendmode, senddate, create_by, create_date, update_by, update_date, del_flag, url, home_call, phone, linkman, walklength, loadlength, startpoint, remarks, job_number, star from htc_jobs_collection
     </sql>
 
     <select id="selectJobsCollectionList" parameterType="JobsCollection" resultMap="JobsCollectionResult">
@@ -52,6 +53,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="startpoint != null  and startpoint != ''"> and startpoint like concat('%', #{startpoint}, '%')</if>
             <if test="remarks != null  and remarks != ''"> and remarks like concat('%', #{remarks}, '%')</if>
             <if test="jobNumber != null  and jobNumber != ''"> and remarks = #{jobNumber}</if>
+            <if test="star != null"> and star = #{star}</if>
         </where>
         order by create_date desc
     </select>
@@ -131,6 +133,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="startpoint != null  and startpoint != ''">startpoint = #{startpoint},</if>
             <if test="remarks != null  and remarks != ''">remarks = #{remarks},</if>
             <if test="jobNumber != null  and jobNumber != ''">job_number = #{jobNumber},</if>
+            <if test="star != null">star = #{star},</if>
         </trim>
         where id = #{id}
     </update>
