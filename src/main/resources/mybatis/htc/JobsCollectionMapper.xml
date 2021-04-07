@@ -38,7 +38,8 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="companyname != null  and companyname != ''"> and companyname like concat('%', #{companyname}, '%')</if>
             <if test="companyaddr != null  and companyaddr != ''"> and companyaddr like concat('%', #{companyaddr}, '%')</if>
             <if test="email != null  and email != ''"> and email like concat('%', #{email}, '%')</if>
-            <if test="sendmode != null  and sendmode != ''"> and sendmode = #{sendmode}</if>
+            <if test="sendmode != null  and sendmode != '' and sendmode != '98'"> and sendmode = #{sendmode}</if>
+            <if test="sendmode != null  and sendmode == '98'"> and sendmode in (0, 1, 2, 3, 4, 5)</if>
             <if test="senddate != null "> and senddate = #{senddate}</if>
             <if test="params.beginCreateDate != null and params.beginCreateDate != ''"> and create_date >= #{params.beginCreateDate}</if>
             <if test="params.endCreateDate != null and params.endCreateDate != ''"> and  #{params.endCreateDate} > create_date</if>
