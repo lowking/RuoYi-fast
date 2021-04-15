@@ -78,8 +78,10 @@
                             <li>
                                 <a class="btn btn-primary btn-rounded btn-sm" onclick="$.table.search()"><i class="fa fa-search"></i>&nbsp;搜索</a>
                                 <a class="btn btn-warning btn-rounded btn-sm" onclick="$.form.reset()"><i class="fa fa-refresh"></i>&nbsp;重置</a>
+                                <a class="btn btn-info btn-rounded btn-sm btn-outline" onclick="notSend()"><i class="fa fa-star-o"></i>&nbsp;未投递</a>
                                 <a class="btn btn-info btn-rounded btn-sm" onclick="readySend()"><i class="fa fa-star"></i>&nbsp;准备投递</a>
                                 <a class="btn btn-success btn-rounded btn-sm" onclick="sendFocus()"><i class="fa fa-star"></i>&nbsp;投递关注</a>
+                                <a class="btn btn-danger btn-rounded btn-sm btn-outline" onclick="keepSend()"><i class="fa fa-star"></i>&nbsp;保留</a>
                             </li>
                         </ul>
                     </div>
@@ -137,6 +139,20 @@
             $.table.search()
         }
 
+        function notSend(){
+            $.form.reset()
+            // 设置查询条件
+            $("select[name=sendmode]").val("99")
+            $.table.search()
+        }
+
+        function keepSend(){
+            $.form.reset()
+            // 设置查询条件
+            $("select[name=sendmode]").val("97")
+            $.table.search()
+        }
+
         $(function() {
             var options = {
                 type: 0,
@@ -169,10 +185,11 @@
                     align: 'center',
                     formatter: function(value, row, index) {
                         var actions = []
-                        actions.push('<a class="btn btn-success btn-xs ' + editFlag + '" href="javascript:void(0)" onclick="$.operate.edit(\'' + row.id + '\')"><i class="fa fa-edit"></i>编辑</a> ')
-                        actions.push('<a class="btn btn-danger btn-xs ' + removeFlag + '" href="javascript:void(0)" onclick="$.operate.remove(\'' + row.id + '\')"><i class="fa fa-remove"></i>删除</a>')
+                        actions.push('<a class="btn btn-success btn-xs ' + editFlag + '" href="javascript:void(0)" onclick="$.operate.editFull(\'' + row.id + '\')"><i class="fa fa-edit"></i></a> ')
+                        actions.push('<a class="btn btn-danger btn-xs ' + removeFlag + '" href="javascript:void(0)" onclick="$.operate.remove(\'' + row.id + '\')"><i class="fa fa-remove"></i></a>')
                         return actions.join('')
-                    }
+                    },
+                    width: '90px'
                 },
                 {
                     field: 'companyname', 
