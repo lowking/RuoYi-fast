@@ -14,10 +14,10 @@
                                 <label>公司名称：</label>
                                 <input type="text" name="companyname"/>
                             </li>
-                            <li>
-                                <label>邮箱：</label>
-                                <input type="text" name="email"/>
-                            </li>
+<!--                            <li>-->
+<!--                                <label>邮箱：</label>-->
+<!--                                <input type="text" name="email"/>-->
+<!--                            </li>-->
                             <li>
                                 <label>投递方式：</label>
                                 <select name="sendmode" th:with="type=${@dict.getType('send_mode')}">
@@ -43,30 +43,30 @@
                                 <span>-</span>
                                 <input type="text" class="time-input" id="endTime3" placeholder="结束时间" name="params[endUpdateDate]"/>
                             </li>
-                            <li>
-                                <label>电话：</label>
-                                <input type="text" name="homeCall"/>
-                            </li>
-                            <li>
-                                <label>手机：</label>
-                                <input type="text" name="phone"/>
-                            </li>
-                            <li>
-                                <label>联系人：</label>
-                                <input type="text" name="linkman"/>
-                            </li>
-                            <li>
-                                <label>走路距离：</label>
-                                <input type="text" name="walklength"/>
-                            </li>
-                            <li>
-                                <label>路程：</label>
-                                <input type="text" name="loadlength"/>
-                            </li>
-                            <li>
-                                <label>起始站点：</label>
-                                <input type="text" name="startpoint"/>
-                            </li>
+<!--                            <li>-->
+<!--                                <label>电话：</label>-->
+<!--                                <input type="text" name="homeCall"/>-->
+<!--                            </li>-->
+<!--                            <li>-->
+<!--                                <label>手机：</label>-->
+<!--                                <input type="text" name="phone"/>-->
+<!--                            </li>-->
+<!--                            <li>-->
+<!--                                <label>联系人：</label>-->
+<!--                                <input type="text" name="linkman"/>-->
+<!--                            </li>-->
+<!--                            <li>-->
+<!--                                <label>走路距离：</label>-->
+<!--                                <input type="text" name="walklength"/>-->
+<!--                            </li>-->
+<!--                            <li>-->
+<!--                                <label>路程：</label>-->
+<!--                                <input type="text" name="loadlength"/>-->
+<!--                            </li>-->
+<!--                            <li>-->
+<!--                                <label>起始站点：</label>-->
+<!--                                <input type="text" name="startpoint"/>-->
+<!--                            </li>-->
                             <li>
                                 <label>星标：</label>
                                 <select name="star">
@@ -163,106 +163,123 @@
                 exportUrl: prefix + "/export",
                 modalName: "工作记录",
                 columns: [
-                {
-                    checkbox: true
-                },
-                {
-                    field: 'id', 
-                    title: '主键',
-                    visible: false
-                },
-                {
-                    title: '星标',
-                    align: 'center',
-                    formatter: function(value, row, index) {
-                        var actions = []
-                        actions.push('<a class="' + editFlag + '" href="javascript:void(0)" onclick="star(\'' + row.id + '\', ' + row.star + ')">' + (1 === row.star ? "★" : "☆") + '</a> ')
-                        return actions.join('')
-                    }
-                },
-                {
-                    title: '操作',
-                    align: 'center',
-                    formatter: function(value, row, index) {
-                        var actions = []
-                        actions.push('<a class="btn btn-success btn-xs ' + editFlag + '" href="javascript:void(0)" onclick="$.operate.editFull(\'' + row.id + '\')"><i class="fa fa-edit"></i></a> ')
-                        actions.push('<a class="btn btn-danger btn-xs ' + removeFlag + '" href="javascript:void(0)" onclick="$.operate.remove(\'' + row.id + '\')"><i class="fa fa-remove"></i></a>')
-                        return actions.join('')
+                    {
+                        checkbox: true
                     },
-                    width: '90px'
-                },
-                {
-                    field: 'companyname', 
-                    title: '公司名称'
-                },
-                {
-                    field: 'companyaddr', 
-                    title: '公司地址',
-                    formatter: function(value, row, index) {
-                        return $.table.tooltip(value, 10)
-                    }
-                },
-                {
-                    field: 'email', 
-                    title: '邮箱'
-                },
-                {
-                    field: 'sendmode', 
-                    title: '投递方式',
-                    formatter: function(value, row, index) {
-                       return $.table.selectDictLabel(sendmodeDatas, value)
-                    }
-                },
-                {
-                    field: 'senddate', 
-                    title: '投递日期'
-                },
-                {
-                    field: 'remarks',
-                    title: '备注',
-                    formatter: function(value, row, index) {
-                        return $.table.tooltip(value, 10)
-                    }
-                },
-                {
-                    field: 'url', 
-                    title: 'url',
-                    formatter: function(value, row, index) {
-                        return '<a href="'+ value +'" target="_blank" class="">招聘网站地址</a>'
-                    }
-                },
-                {
-                    field: 'homeCall', 
-                    title: '电话'
-                },
-                {
-                    field: 'phone', 
-                    title: '手机'
-                },
-                {
-                    field: 'linkman', 
-                    title: '联系人'
-                },
-                {
-                    field: 'walklength', 
-                    title: '走路距离'
-                },
-                {
-                    field: 'loadlength', 
-                    title: '路程'
-                },
-                {
-                    field: 'startpoint', 
-                    title: '起始站点'
-                },
-                {
-                    field: 'createDate',
-                    title: '创建时间'
-                },
-                {
-                    field: 'updateDate',
-                    title: '更新时间'
-                }]
+                    {
+                        field: 'id',
+                        title: '主键',
+                        visible: false
+                    },
+                    {
+                        title: '星标',
+                        align: 'center',
+                        formatter: function(value, row, index) {
+                            var actions = []
+                            actions.push('<a class="' + editFlag + '" href="javascript:void(0)" onclick="star(\'' + row.id + '\', ' + row.star + ')">' + (1 === row.star ? "★" : "☆") + '</a> ')
+                            return actions.join('')
+                        },
+                        width: '30px'
+                    },
+                    {
+                        title: '操作',
+                        align: 'center',
+                        formatter: function(value, row, index) {
+                            var actions = []
+                            actions.push('<a class="btn btn-success btn-xs ' + editFlag + '" href="javascript:void(0)" onclick="$.operate.editFull(\'' + row.id + '\')"><i class="fa fa-edit"></i></a> ')
+                            actions.push('<a class="btn btn-danger btn-xs ' + removeFlag + '" href="javascript:void(0)" onclick="$.operate.remove(\'' + row.id + '\')"><i class="fa fa-remove"></i></a> ')
+                            actions.push('<a href="'+ row.url +'" target="_blank" class="fa fa-external-link-square"></a>')
+                            return actions.join('')
+                        },
+                        width: '90px'
+                    },
+                    {
+                        field: 'companyname',
+                        title: '公司名称',
+                        formatter: function(value, row, index) {
+                            return $.table.tooltip(value, 10)
+                        },
+                        width: '200px'
+                    },
+                    {
+                        field: 'companyaddr',
+                        title: '公司地址',
+                        formatter: function(value, row, index) {
+                            return $.table.tooltip(value, 10)
+                        },
+                        width: '200px'
+                    },
+                    // {
+                    //     field: 'email',
+                    //     title: '邮箱'
+                    // },
+                    {
+                        field: 'sendmode',
+                        title: '投递方式',
+                        formatter: function(value, row, index) {
+                           return $.table.selectDictLabel(sendmodeDatas, value)
+                        },
+                        width: '100px'
+                    },
+                    {
+                        field: 'senddate',
+                        title: '投递日期',
+                        formatter: function(value, row, index) {
+                            if (value != null) {
+                                return value.substring(0, 10)
+                            }
+                        },
+                        width: '100px'
+                    },
+                    {
+                        field: 'remarks',
+                        title: '备注',
+                        formatter: function(value, row, index) {
+                            return $.table.tooltip(value, 10)
+                        },
+                        width: '200px'
+                    },
+                    // {
+                    //     field: 'url',
+                    //     title: 'url',
+                    //     formatter: function(value, row, index) {
+                    //         return '<a href="'+ value +'" target="_blank" class="fa fa-external-link-square"></a>'
+                    //     }
+                    // },
+                    // {
+                    //     field: 'homeCall',
+                    //     title: '电话'
+                    // },
+                    // {
+                    //     field: 'phone',
+                    //     title: '手机'
+                    // },
+                    // {
+                    //     field: 'linkman',
+                    //     title: '联系人'
+                    // },
+                    // {
+                    //     field: 'walklength',
+                    //     title: '走路距离'
+                    // },
+                    // {
+                    //     field: 'loadlength',
+                    //     title: '路程'
+                    // },
+                    // {
+                    //     field: 'startpoint',
+                    //     title: '起始站点'
+                    // },
+                    {
+                        field: 'createDate',
+                        title: '创建时间',
+                        width: '150px'
+                    },
+                    // {
+                    //     field: 'updateDate',
+                    //     title: '更新时间'
+                    // }
+                ]
             }
             $.table.init(options)
         })

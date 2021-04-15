@@ -808,9 +808,9 @@ label {
 	font-weight: normal;
 }
 
-#bootstrap-table {
-	min-width:1500px;
-}
+/*#bootstrap-table {*/
+/*	min-width:1500px;*/
+/*}*/
 
 /** 表格查询数据 **/
 .table-striped {
